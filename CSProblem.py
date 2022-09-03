@@ -1,6 +1,7 @@
 # SUDOKU
 import math
 import copy
+#3/'קראדטגוןעליחעגכגדכסצחימעארקכ'דיחתליחעא
 # import CSPSolver
 # board - The variables' value are in a list of the (N*N)*(N*N) board cells
 #            (a vector represenring a mat.).
@@ -10,22 +11,19 @@ import copy
 #
 # The state is a list of 2 lists: the vars. and the domains.
 N = 0
-
 def create(fpath="sudoku.txt"):
     global N
     board = read_board_from_file(fpath)
     N = int(len(board) ** 0.25)
     # creating the domains for each place on the sudoku board
-    temp = []
-
+    p=[board,[]]
     for i in range(len(board)):
         if(board[i]!=0): #if there is a number there is not domain
             dom=[]
         else:
             dom=[1,2,3,4,5,6,7,8,9] #define the domain for every index
-        temp.append(copy.deepcopy(dom))
+        p[1].append(copy.deepcopy(dom))
     # p is a list with 2 elements: The board and the list of domains
-    p = [board, temp]
     BOARD = 0
     POSSIBILITIES = 1
     # going through each of the N^4 places on the sudoku board
@@ -42,18 +40,17 @@ def create(fpath="sudoku.txt"):
             square_starting_row = (square // N) * N  # finding the upper row of the square
             # going through every place in the row of the current place, and removing from the domain of the current place any number that's already in one of the places in it's row
             for j in range(row * N ** 2, (row + 1) * N ** 2):
-                if board[j] in temp[i]:
-                    temp[i].remove(board[j])
+                if board[j] in p[1][i]:
+                    p[1][i].remove(board[j])
                 # going through every place in the column of the current place, and removing from the domain of the current place any number that's already in one of the places in it's column
             for j in range(column, N ** 4, N ** 2):
-                if board[j] != 0 and board[j] in temp[i]:
-                    temp[i].remove(board[j])
+                if board[j] in p[1][i]:
+                    p[1][i].remove(board[j])
                 # going through every place in the N X N square that the current place is in, and removing from the domain of the current place any number that's already in one of the places in it's N X N square
-
             for j in range(square_starting_row, square_starting_row + N):
                 for k in range(square_starting_column, square_starting_column + 3):
-                    if board[row * N ** 2 + column] != 0 and board[row * N ** 2 + column] in temp[i]:
-                        temp[i].remove(board[row * N ** 2 + column])
+                    if board[square_starting_row * N ** 2 + square_starting_column] != 0 and board[square_starting_row * N ** 2 + square_starting_column] in p[1][i]:
+                        p[1][i].remove(board[square_starting_row * N ** 2 + square_starting_column])
 
     return p
 
@@ -155,4 +152,21 @@ def present(problem):
         pad = (math.ceil(math.log(N * N, 10)) - len(x))
         print(pad * " ", x, end="")
     print()
+
+def sqr(b,n):
+    v1_row = n // (N ** 2)  # the row that v1 is in
+    v1_column = n % (N ** 2)  # the column that v1 is in
+    v2_square = v1_column // N + N * (v1_row // N)  # the NxN square that v2 is in
+    return v2_square
+def sqr1(b,n):
+    row = n // (N ** 2)
+    column = n % (N ** 2)
+    square = column // N + N * ( row // N)
+    square_starting_column = (square % N) * N  # finding the left most column of the square
+    square_starting_row = (square // N) * N  # finding the upper row of the square
+    return(square,square_starting_column,square_starting_row)
+    return()
+p=create()
+for i in range(81):
+    print(sqr1(p[0],i),end='')
 

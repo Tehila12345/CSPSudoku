@@ -5,7 +5,6 @@ import copy
 def solve(n):
     p = backtrack(CSProblem.create())
     CSProblem.present(p)
-
 def backtrack(p):
     var = next_var(p)  #
     if var == None:
